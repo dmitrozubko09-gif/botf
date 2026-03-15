@@ -50,7 +50,7 @@ def clear_history(chat_id: int):
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     clear_history(update.effective_chat.id)
     await update.message.reply_text(
-        "👋 Привіт! Я AI-асистент на базі Groq.\n\n"
+        "👋 Привіт! Я AI-асистент.\n\n"
         "Просто напиши мені що-небудь, і я відповім!\n\n"
         "Команди:\n"
         "/start — почати нову розмову\n"
