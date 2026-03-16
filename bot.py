@@ -168,8 +168,8 @@ async def get_weather(city: str) -> str:
     except httpx.TimeoutException:
         return "❌ Сервіс погоди не відповідає. Спробуй пізніше."
     except Exception as e:
-        logger.error(f"Weather error: {e}")
-        return f"❌ Не вдалося отримати погоду для '{city}'."
+        logger.error(f"Weather error: {e}", exc_info=True)
+        return f"❌ Помилка: {str(e)}"
 
 
 def _weather_icon(weather_id: int) -> str:
