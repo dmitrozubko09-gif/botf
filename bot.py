@@ -74,12 +74,7 @@ TOOLS = [
                 "properties": {
                     "query": {
                         "type": "string",
-                        "description": "Тема для пошуку новин, наприклад: Ukraine, technology, sport. Якщо загальні новини — залиш порожнім."
-                    },
-                    "language": {
-                        "type": "string",
-                        "description": "Мова новин: uk (українська), en (англійська). За замовчуванням en.",
-                        "enum": ["uk", "en"]
+                        "description": "Тема для пошуку новин англійською, наприклад: Ukraine, technology, sport, war, politics. Якщо загальні світові новини — залиш порожнім."
                     }
                 },
                 "required": []
@@ -168,8 +163,8 @@ async def get_weather(city: str) -> str:
     except httpx.TimeoutException:
         return "❌ Сервіс погоди не відповідає. Спробуй пізніше."
     except Exception as e:
-        logger.error(f"Weather error: {e}", exc_info=True)
-        return f"❌ Помилка: {str(e)}"
+        logger.error(f"Weather error: {e}")
+        return f"❌ Не вдалося отримати погоду для '{city}'."
 
 
 def _weather_icon(weather_id: int) -> str:
@@ -192,7 +187,7 @@ def _weather_icon(weather_id: int) -> str:
 
 
 # ─── Реальне отримання новин ──────────────────────────────────────────────────
-async def get_news(query: str = "", language: str = "en") -> str:
+async def get_news(query: str = "") -> str:
     if not NEWS_API_KEY:
         return "❌ NEWS_API_KEY не налаштовано. Отримай безкоштовний ключ на newsapi.org і додай у змінні середовища."
 
@@ -204,7 +199,7 @@ async def get_news(query: str = "", language: str = "en") -> str:
                     params={
                         "q": query,
                         "apiKey": NEWS_API_KEY,
-                        "language": language,
+                        "language": "en",
                         "sortBy": "publishedAt",
                         "pageSize": 5
                     }
@@ -214,7 +209,7 @@ async def get_news(query: str = "", language: str = "en") -> str:
                     "https://newsapi.org/v2/top-headlines",
                     params={
                         "apiKey": NEWS_API_KEY,
-                        "language": language,
+                        "language": "en",
                         "pageSize": 5
                     }
                 )
@@ -259,8 +254,7 @@ async def call_tool(tool_name: str, tool_args: dict) -> str:
         return await get_weather(tool_args.get("city", ""))
     elif tool_name == "get_news":
         return await get_news(
-            query=tool_args.get("query", ""),
-            language=tool_args.get("language", "en")
+            query=tool_args.get("query", "")
         )
     return "❌ Невідомий інструмент."
 
